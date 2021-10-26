@@ -26,7 +26,7 @@ exports.index = async (request, response) => {
       compare: item.priceBitcoin > bitcoinBuy ? false : true,
     }));
 
-    return response.json({
+    return response.status(200).json({
       error: false,
       data: {
         bitcoinBuy: bitcoinBuy,
@@ -35,9 +35,9 @@ exports.index = async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    return response.json({
+    return response.status(500).json({
       error: true,
-      message: "Transactions not found",
+      message: "Transactions get error",
     });
   }
 };
@@ -57,19 +57,19 @@ exports.store = async (request, response) => {
         [parseFloat(amount), qty, parseFloat(priceBitcoin), created_at, userid]
       );
 
-      return response.json({
+      return response.status(200).json({
         error: false,
         message: "Congratulations, your transaction has been success",
       });
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error when trying saving transaction",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter value to your transaction",
     });
@@ -77,7 +77,7 @@ exports.store = async (request, response) => {
 };
 
 exports.show = async (request, response) => {
-  const { id } = request.query;
+  const { id } = request.params;
   const userid = request.userid;
 
   try {
@@ -97,13 +97,13 @@ exports.show = async (request, response) => {
     );
 
     if (!row) {
-      return response.json({
+      return response.status(404).json({
         error: true,
         message: "Transaction not found",
       });
     }
 
-    return response.json({
+    return response.status(200).json({
       error: false,
       data: {
         bitcoinBuy,
@@ -112,15 +112,15 @@ exports.show = async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    return response.json({
+    return response.status(500).json({
       error: true,
-      message: "Transaction not found",
+      message: "Transaction get error",
     });
   }
 };
 
 exports.update = async (request, response) => {
-  const { id } = request.query;
+  const { id } = request.params;
   const { amount, priceBitcoin } = request.body;
   const userid = request.userid;
 
@@ -141,25 +141,25 @@ exports.update = async (request, response) => {
           [amount, qty, priceBitcoin, row.id, userid]
         );
 
-        return response.json({
+        return response.status(200).json({
           error: false,
           message: "Congratulations, your transaction has been success updated",
         });
       } else {
-        return response.json({
+        return response.status(404).json({
           error: true,
           message: "Transaction not found",
         });
       }
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error when trying saving transaction",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter value to your transaction",
     });
@@ -188,18 +188,22 @@ exports.getPrice = async (request, response) => {
 
       const mergeData = Object.assign(data, newData);
 
-      return response.json({ error: false, data: mergeData });
+      return response.status(200).json({ error: false, data: mergeData });
     } catch (error) {
       console.log(error);
-      return response.json({ error: true, message: "Price not found" });
+      return response
+        .status(500)
+        .json({ error: true, message: "Price get error" });
     }
   } else {
-    return response.json({ error: true, message: "Please enter date value" });
+    return response
+      .status(422)
+      .json({ error: true, message: "Please enter date value" });
   }
 };
 
 exports.destroy = async (request, response) => {
-  const { id } = request.query;
+  const { id } = request.params;
   const userid = request.userid;
 
   try {
@@ -210,9 +214,13 @@ exports.destroy = async (request, response) => {
       [id, userid]
     );
 
-    return response.json({ error: false, message: "Transaction deleted" });
+    return response
+      .status(200)
+      .json({ error: false, message: "Transaction deleted" });
   } catch (error) {
     console.log(error);
-    return response.json({ error: true, message: "Transaction not found" });
+    return response
+      .status(500)
+      .json({ error: true, message: "Transaction not found error" });
   }
 };

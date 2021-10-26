@@ -32,7 +32,7 @@ exports.index = async (request, response) => {
       };
     });
 
-    return response.json({
+    return response.status(200).json({
       error: false,
       data: {
         transactionSum: {
@@ -46,9 +46,9 @@ exports.index = async (request, response) => {
     });
   } catch (error) {
     console.log(error);
-    return response.json({
+    return response.status(500).json({
       error: true,
-      message: "Transactions not found",
+      message: "Transactions get error",
     });
   }
 };

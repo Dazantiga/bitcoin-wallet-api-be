@@ -30,7 +30,7 @@ exports.login = async (request, response) => {
 
       if (row) {
         if (!bcrypt.compareSync(password, row.password)) {
-          return response.json({
+          return response.status(422).json({
             error: true,
             message: "Could not find a user with these credentials",
           });
@@ -44,22 +44,22 @@ exports.login = async (request, response) => {
           }
         );
 
-        return response.json({ error: false, token });
+        return response.status(200).json({ error: false, token });
       } else {
-        return response.json({
+        return response.status(404).json({
           error: true,
           message: "Could not find a user with these credentials",
         });
       }
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error trying to login",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter your credentials to enter the system",
     });
@@ -85,13 +85,13 @@ exports.register = async (request, response) => {
           `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`,
           [name, email, hashPassword]
         );
-        return response.json({
+        return response.status(200).json({
           error: false,
           message:
             "Congratulations, your registration has been completed, you can login",
         });
       } else {
-        return response.json({
+        return response.status(422).json({
           error: true,
           message:
             "There is already a user with this email, try another one or login",
@@ -99,13 +99,13 @@ exports.register = async (request, response) => {
       }
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error when trying to register the user",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter your data to register in the system",
     });
@@ -146,26 +146,26 @@ exports.forgot = async (request, response) => {
           return true;
         });
 
-        return response.json({
+        return response.status(200).json({
           error: false,
           message:
             "We have sent you an email with the link to retrieve your password, please login and follow the instructions",
         });
       } else {
-        return response.json({
+        return response.status(404).json({
           error: true,
           message: "We couldn't find a user with this email.",
         });
       }
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error trying to recover password",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter your email to retrieve your password",
     });
@@ -192,25 +192,25 @@ exports.reset = async (request, response) => {
           [hashPassword, row.id]
         );
 
-        return response.json({
+        return response.status(200).json({
           error: false,
           message: "Congratulations your password has been updated",
         });
       } else {
-        return response.json({
+        return response.status(404).json({
           error: true,
           message: "Could not find a user with this email and token",
         });
       }
     } catch (error) {
       console.log(error);
-      return response.json({
+      return response.status(500).json({
         error: true,
         message: "Error trying to reset password",
       });
     }
   } else {
-    return response.json({
+    return response.status(422).json({
       error: true,
       message: "Please enter the data to reset your password",
     });
@@ -218,7 +218,7 @@ exports.reset = async (request, response) => {
 };
 
 exports.logout = (request, response) => {
-  return response.json({
+  return response.status(200).json({
     error: false,
     token: null,
     message: "Logout",
